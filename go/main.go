@@ -86,6 +86,8 @@ func main() {
 			fmt.Println(quoter.GetLifeQuote())
 		case "1337":
 			fmt.Println(quoter.GetPasswordQuote())
+		case "1234":
+			fmt.Println(quoter.GetWisdomQuote())
 		default:
 			fmt.Println("Invalid choice. Please try again.")
 		}
