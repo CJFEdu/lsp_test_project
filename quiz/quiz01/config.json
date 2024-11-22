@@ -1,0 +1,17 @@
+{
+    "title": "General Knowledge Quiz",
+    "timeLimit": 10,
+    "randomizeOrder": true,
+    "passingScore": 70,
+    "questions": [
+        ["question001"],
+        ["question002", "question005"],
+        ["question003"],
+        ["question004"]
+    ],
+    "settings": {
+        "showFeedbackAfterEach": true,
+        "allowSkipping": true,
+        "showTimer": true
+    }
+}
