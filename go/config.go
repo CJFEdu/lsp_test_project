@@ -2,14 +2,8 @@ package main
 
 // Config represents the quiz configuration
 type Config struct {
-	Title          string     `json:"title"`
-	TimeLimit      int        `json:"timeLimit"`
-	RandomizeOrder bool       `json:"randomizeOrder"`
-	PassingScore   int        `json:"passingScore"`
-	Questions      [][]string `json:"questions"`
-	Settings       struct {
-		ShowFeedbackAfterEach bool `json:"showFeedbackAfterEach"`
-		AllowSkipping         bool `json:"allowSkipping"`
-		ShowTimer             bool `json:"showTimer"`
-	} `json:"settings"`
+	Title        string `json:"title"`
+	TimeLimit    int    `json:"timelimit"`    // in minutes
+	Randomize    bool   `json:"randomize"`    // randomize question order
+	PassingScore int    `json:"passingScore"` // percentage needed to pass
 }
