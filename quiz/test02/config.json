@@ -1,0 +1,17 @@
+{
+    "title": "Alternative Questions Test",
+    "timeLimit": 15,
+    "randomizeOrder": true,
+    "passingScore": 80,
+    "questions": [
+        ["question001", "question002"],
+        ["question003", "question004"],
+        ["question002", "question005"],
+        ["question001", "question003"]
+    ],
+    "settings": {
+        "showFeedbackAfterEach": false,
+        "allowSkipping": true,
+        "showTimer": false
+    }
+}

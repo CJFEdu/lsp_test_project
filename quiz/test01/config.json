@@ -1,0 +1,17 @@
+{
+    "title": "Basic Knowledge Test",
+    "timeLimit": 5,
+    "randomizeOrder": false,
+    "passingScore": 60,
+    "questions": [
+        ["question001"],
+        ["question002"],
+        ["question003"],
+        ["question004"]
+    ],
+    "settings": {
+        "showFeedbackAfterEach": true,
+        "allowSkipping": false,
+        "showTimer": true
+    }
+}

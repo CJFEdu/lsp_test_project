@@ -1,4 +1,4 @@
-package main
+package quiz_logic
 
 import (
 	"fmt"
@@ -9,29 +9,30 @@ import (
 )
 
 type QuizInfo struct {
-	ID    string
+	ID    int
 	Title string
 	Path  string
 }
 
-func getAvailableQuizzes(basePath string) ([]QuizInfo, error) {
+func GetAvailableQuizzes(basePath string) ([]QuizInfo, error) {
 	entries, err := os.ReadDir(basePath)
 	if err != nil {
 		return nil, fmt.Errorf("error reading directory: %v", err)
 	}
 
 	var quizzes []QuizInfo
+	quizID := 1
 	for _, entry := range entries {
-		fmt.Println("Found:", entry.Name())
 		if entry.IsDir() && strings.HasPrefix(entry.Name(), "quiz") {
 			quizPath := filepath.Join(basePath, entry.Name())
-			config, err := loadConfig(quizPath) // loadConfig already joins with config.json
+			config, err := LoadConfig(quizPath)
 			if err == nil {
 				quizzes = append(quizzes, QuizInfo{
-					ID:    entry.Name(),
+					ID:    quizID,
 					Title: config.Title,
 					Path:  quizPath,
 				})
+				quizID++
 			} else {
 				return nil, fmt.Errorf("error loading config for %s: %v", entry.Name(), err)
 			}
@@ -46,7 +47,7 @@ func getAvailableQuizzes(basePath string) ([]QuizInfo, error) {
 	return quizzes, nil
 }
 
-func showMenu() {
+func ShowMenu() {
 	fmt.Println("\n=== Quiz Program Menu ===")
 	fmt.Println("1. List Available Quizzes")
 	fmt.Println("2. Start a Quiz")
@@ -54,7 +55,7 @@ func showMenu() {
 	fmt.Print("\nEnter your choice (1-3): ")
 }
 
-func listQuizzes(quizzes []QuizInfo) {
+func ListQuizzes(quizzes []QuizInfo) {
 	fmt.Println("\n=== Available Quizzes ===")
 	if len(quizzes) == 0 {
 		fmt.Println("No quizzes available.")
@@ -64,16 +65,16 @@ func listQuizzes(quizzes []QuizInfo) {
 	fmt.Println("ID\tTitle")
 	fmt.Println("--\t-----")
 	for _, quiz := range quizzes {
-		fmt.Printf("%s\t%s\n", quiz.ID, quiz.Title)
+		fmt.Printf("%d\t%s\n", quiz.ID, quiz.Title)
 	}
 }
 
-func promptForQuiz(quizzes []QuizInfo) *QuizInfo {
-	fmt.Print("\nEnter quiz ID (or 'q' to return to menu): ")
-	var input string
-	fmt.Scanln(&input)
+func PromptForQuiz(quizzes []QuizInfo) *QuizInfo {
+	fmt.Print("\nEnter quiz number (or 0 to return to menu): ")
+	var input int
+	_, err := fmt.Scanln(&input)
 
-	if input == "q" {
+	if err != nil || input == 0 {
 		return nil
 	}
 
@@ -83,6 +84,6 @@ func promptForQuiz(quizzes []QuizInfo) *QuizInfo {
 		}
 	}
 
-	fmt.Println("Invalid quiz ID.")
+	fmt.Println("Invalid quiz number.")
 	return nil
 }

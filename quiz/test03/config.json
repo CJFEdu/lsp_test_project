@@ -1,0 +1,15 @@
+{
+    "title": "Quick Quiz",
+    "timeLimit": 0,
+    "randomizeOrder": false,
+    "passingScore": 0,
+    "questions": [
+        ["question001"],
+        ["question005"]
+    ],
+    "settings": {
+        "showFeedbackAfterEach": true,
+        "allowSkipping": false,
+        "showTimer": false
+    }
+}

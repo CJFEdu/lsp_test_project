@@ -1,0 +1,6 @@
+{
+    "question": "Which programming language is known for its use in data science and machine learning?",
+    "type": "multiple_choice",
+    "options": ["Python", "HTML", "CSS", "SQL"],
+    "answers": ["Python"]
+}

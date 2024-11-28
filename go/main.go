@@ -1,81 +1,35 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"quiz/quiz_logic"
 )
-
-func loadConfig(quizPath string) (Config, error) {
-	var config Config
-	data, err := os.ReadFile(filepath.Join(quizPath, "config.json"))
-	if err != nil {
-		return config, fmt.Errorf("error reading config: %v", err)
-	}
-
-	err = json.Unmarshal(data, &config)
-	if err != nil {
-		return config, fmt.Errorf("error parsing config: %v", err)
-	}
-
-	return config, nil
-}
-
-func loadQuestion(quizPath, questionID string) (Question, error) {
-	var question Question
-	data, err := os.ReadFile(filepath.Join(quizPath, questionID+".json"))
-	if err != nil {
-		return question, fmt.Errorf("error reading question %s: %v", questionID, err)
-	}
-
-	err = json.Unmarshal(data, &question)
-	if err != nil {
-		return question, fmt.Errorf("error parsing question %s: %v", questionID, err)
-	}
-
-	return question, nil
-}
-
-func startQuiz(quizPath string) error {
-	config, err := loadConfig(filepath.Join(quizPath, "config.json"))
-	if err != nil {
-		return fmt.Errorf("error loading config: %v", err)
-	}
-
-	quiz := Quiz{Config: config}
-	err = quiz.selectQuestions(quizPath)
-	if err != nil {
-		return fmt.Errorf("error loading questions: %v", err)
-	}
-
-	quiz.run()
-	return nil
-}
 
 func main() {
 	basePath := filepath.Join("..", "quiz")
 
-	quizzes, err := getAvailableQuizzes(basePath)
+	quizzes, err := quiz_logic.GetAvailableQuizzes(basePath)
 
 	if err != nil {
 		fmt.Printf("Error loading quizzes: %v\n", err)
 		os.Exit(1)
 	}
 
-	quoter := NewQuoter()
+	quoter := quiz_logic.NewQuoter()
 
 	for {
-		showMenu()
+		quiz_logic.ShowMenu()
 		var choice string
 		fmt.Scanln(&choice)
 
 		switch choice {
 		case "1":
-			listQuizzes(quizzes)
+			quiz_logic.ListQuizzes(quizzes)
 		case "2":
-			if selectedQuiz := promptForQuiz(quizzes); selectedQuiz != nil {
-				if err := startQuiz(selectedQuiz.Path); err != nil {
+			if selectedQuiz := quiz_logic.PromptForQuiz(quizzes); selectedQuiz != nil {
+				if err := quiz_logic.StartQuiz(selectedQuiz.Path); err != nil {
 					fmt.Printf("Error running quiz: %v\n", err)
 				}
 			}

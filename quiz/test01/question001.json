@@ -1,0 +1,6 @@
+{
+    "question": "What is the capital of France?",
+    "type": "multiple_choice",
+    "options": ["London", "Paris", "Berlin", "Madrid"],
+    "answers": ["Paris"]
+}

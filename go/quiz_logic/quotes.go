@@ -1,6 +1,7 @@
-package main
+package quiz_logic
 
 import (
+	"errors"
 	"math/rand"
 	"time"
 )
@@ -12,6 +13,7 @@ type Quoter struct {
 	humor     string
 	power     float64
 	knowledge bool
+	quotes    []string
 }
 
 func NewQuoter() *Quoter {
@@ -20,6 +22,13 @@ func NewQuoter() *Quoter {
 		humor:     "haha",
 		power:     rng.Float64() * 9000,
 		knowledge: rng.Intn(2) == 1,
+		quotes: []string{
+			"Learning is not attained by chance, it must be sought for with ardor and attended to with diligence.",
+			"Education is not preparation for life; education is life itself.",
+			"The beautiful thing about learning is that nobody can take it away from you.",
+			"Live as if you were to die tomorrow. Learn as if you were to live forever.",
+			"The more that you read, the more things you will know. The more that you learn, the more places you'll go.",
+		},
 	}
 }
 
@@ -38,6 +47,30 @@ func (q *Quoter) GetPower() float64 {
 
 func (q *Quoter) GetKnowledge() bool {
 	return q.knowledge
+}
+
+// GetQuotes returns the slice of quotes - used for testing
+func (q *Quoter) GetQuotes() []string {
+	return q.quotes
+}
+
+// GetQuoteByIndex returns the quote at the specified index
+// Returns an error if index is out of bounds
+func (q *Quoter) GetQuoteByIndex(index int) (string, error) {
+	if index < 0 || index >= len(q.quotes) {
+		return "", errors.New("index out of bounds")
+	}
+	return q.quotes[index], nil
+}
+
+// QuoteExists checks if the given quote exists in the quotes slice
+func (q *Quoter) QuoteExists(quote string) bool {
+	for _, q := range q.quotes {
+		if q == quote {
+			return true
+		}
+	}
+	return false
 }
 
 // Quote methods
@@ -68,12 +101,9 @@ func (q *Quoter) GetHumorQuote() string {
 }
 
 func (q *Quoter) GetRandomQuote() string {
-	quotes := []string{
-		q.GetLifeQuote(),
-		q.GetPasswordQuote(),
-		q.GetWisdomQuote(),
-		q.GetHumorQuote(),
-		"May the Force be with you.",
+	if len(q.quotes) == 0 {
+		return ""
 	}
-	return quotes[rng.Intn(len(quotes))]
+	rng.Seed(time.Now().UnixNano())
+	return q.quotes[rng.Intn(len(q.quotes))]
 }

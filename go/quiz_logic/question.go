@@ -1,13 +1,17 @@
-package main
+package quiz_logic
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 // Question interface defines the common behavior for all question types
 type Question interface {
-	GetQuestion() string
-	GetType() string
-	CheckAnswer(answer string) bool
-	GetOptions() []string
+	getQuestion() string
+	getType() string
+	checkAnswer(answer string) bool
+	getOptions() []string
 }
 
 // BaseQuestion contains common fields for all question types
@@ -17,11 +21,11 @@ type BaseQuestion struct {
 	Answers      []string `json:"answers"`
 }
 
-func (bq *BaseQuestion) GetQuestion() string {
+func (bq *BaseQuestion) getQuestion() string {
 	return bq.QuestionText
 }
 
-func (bq *BaseQuestion) GetType() string {
+func (bq *BaseQuestion) getType() string {
 	return bq.Type
 }
 
@@ -31,16 +35,26 @@ type MultipleChoiceQuestion struct {
 	Options []string `json:"options"`
 }
 
-func (mcq *MultipleChoiceQuestion) CheckAnswer(answer string) bool {
+func (mcq *MultipleChoiceQuestion) checkAnswer(answer string) bool {
+	// First try to parse the answer as a number
+	if num, err := strconv.Atoi(answer); err == nil && num > 0 && num <= len(mcq.Options) {
+		// Convert to zero-based index
+		answer = mcq.Options[num-1]
+	}
+
+	// Convert answer to lowercase for case-insensitive comparison
+	answer = strings.ToLower(answer)
+
+	// Check if the answer matches any of the correct answers
 	for _, correctAnswer := range mcq.Answers {
-		if answer == correctAnswer {
+		if answer == strings.ToLower(correctAnswer) {
 			return true
 		}
 	}
 	return false
 }
 
-func (mcq *MultipleChoiceQuestion) GetOptions() []string {
+func (mcq *MultipleChoiceQuestion) getOptions() []string {
 	return mcq.Options
 }
 
@@ -49,16 +63,28 @@ type TrueFalseQuestion struct {
 	BaseQuestion
 }
 
-func (tfq *TrueFalseQuestion) CheckAnswer(answer string) bool {
+func (tfq *TrueFalseQuestion) checkAnswer(answer string) bool {
+	// Convert numeric answers to text
+	switch answer {
+	case "1":
+		answer = "true"
+	case "2":
+		answer = "false"
+	}
+
+	// Convert answer to lowercase for case-insensitive comparison
+	answer = strings.ToLower(answer)
+
+	// Check if the answer matches any of the correct answers
 	for _, correctAnswer := range tfq.Answers {
-		if answer == correctAnswer {
+		if answer == strings.ToLower(correctAnswer) {
 			return true
 		}
 	}
 	return false
 }
 
-func (tfq *TrueFalseQuestion) GetOptions() []string {
+func (tfq *TrueFalseQuestion) getOptions() []string {
 	return []string{"True", "False"}
 }
 
@@ -67,21 +93,24 @@ type FillInBlankQuestion struct {
 	BaseQuestion
 }
 
-func (fib *FillInBlankQuestion) CheckAnswer(answer string) bool {
+func (fib *FillInBlankQuestion) checkAnswer(answer string) bool {
+	// Convert answer to lowercase for case-insensitive comparison
+	answer = strings.ToLower(answer)
+
 	for _, correctAnswer := range fib.Answers {
-		if answer == correctAnswer {
+		if answer == strings.ToLower(correctAnswer) {
 			return true
 		}
 	}
 	return false
 }
 
-func (fib *FillInBlankQuestion) GetOptions() []string {
+func (fib *FillInBlankQuestion) getOptions() []string {
 	return nil
 }
 
-// CreateQuestion factory function to create the appropriate question type
-func CreateQuestion(questionData map[string]interface{}) (Question, error) {
+// createQuestion factory function to create the appropriate question type
+func createQuestion(questionData map[string]interface{}) (Question, error) {
 	// Extract common fields
 	baseQuestion := BaseQuestion{
 		QuestionText: questionData["question"].(string),
